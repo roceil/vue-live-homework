@@ -22,7 +22,7 @@ defineProps({
   <div class="ProductsTable">
     <div class="flex flex-col mt-3 h-full justify-between">
       <table class="w-full text-left items-center justify-center">
-        <thead>
+        <thead class="border-b-2 border-black mb4">
           <tr class="text-gray-600">
             <th class="px-4 py-2" v-for="title in tableTitle" :key="title">
               {{ title }}
@@ -35,7 +35,7 @@ defineProps({
             <td class="px-4 py-2">NT$ {{ product.origin_price }}</td>
             <td class="px-4 py-2">NT$ {{ product.price }}</td>
             <td class="px-4 py-2">
-              <span v-if="true" class="text-green-500">啟用</span>
+              <span v-if="product.is_enabled" class="text-green-500">啟用</span>
               <span v-else>未啟用</span>
             </td>
             <td class="px-4 py-2">
@@ -56,5 +56,3 @@ defineProps({
     </div>
   </div>
 </template>
-
-<style lang="scss" scoped></style>

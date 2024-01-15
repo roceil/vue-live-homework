@@ -66,7 +66,7 @@ const selectedProduct = (id: string) => {
 
 <template>
   <div class="ProductsView">
-    <div class="max-w-7xl mx-auto py-6 px-4 flex">
+    <div class="max-w-7xl mx-auto py-6 px-4 flex space-x-7">
       <!-- 產品總表 -->
       <div class="w-2/3">
         <h2 class="text-3xl font-bold text-gray-900 block">產品列表</h2>

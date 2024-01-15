@@ -42,6 +42,10 @@ const login_api = async () => {
 };
 
 const handleSubmit = async () => {
+  if (!loginForm.value[0].inputValue || !loginForm.value[1].inputValue) {
+    alert("請輸入帳號密碼");
+    return;
+  }
   try {
     const loginSuccess = await login_api();
     if (loginSuccess) {
