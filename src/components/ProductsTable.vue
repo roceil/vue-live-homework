@@ -1,0 +1,60 @@
+<script lang="ts" setup>
+import type { Product } from "@/views/ProductsView.vue";
+import type { PropType } from "vue";
+
+defineProps({
+  tableTitle: {
+    type: Array as PropType<string[]>,
+    required: true,
+  },
+  products: {
+    type: Array as PropType<Product[]>,
+    required: true,
+  },
+  selectedProduct: {
+    type: Function,
+    required: true,
+  },
+});
+</script>
+
+<template>
+  <div class="ProductsTable">
+    <div class="flex flex-col mt-3 h-full justify-between">
+      <table class="w-full text-left items-center justify-center">
+        <thead>
+          <tr class="text-gray-600">
+            <th class="px-4 py-2" v-for="title in tableTitle" :key="title">
+              {{ title }}
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="bg-gray-100" v-for="product in products" :key="product.id">
+            <td class="px-4 py-2">{{ product.title }}</td>
+            <td class="px-4 py-2">NT$ {{ product.origin_price }}</td>
+            <td class="px-4 py-2">NT$ {{ product.price }}</td>
+            <td class="px-4 py-2">
+              <span v-if="true" class="text-green-500">啟用</span>
+              <span v-else>未啟用</span>
+            </td>
+            <td class="px-4 py-2">
+              <button
+                class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none"
+                @click="selectedProduct(product.id)"
+              >
+                查看細節
+              </button>
+            </td>
+          </tr>
+        </tbody>
+        <p class="text-sm text-gray-600 mt-3">
+          目前有
+          <span class="font-medium text-gray-800">{{ products?.length }}</span> 項產品
+        </p>
+      </table>
+    </div>
+  </div>
+</template>
+
+<style lang="scss" scoped></style>
