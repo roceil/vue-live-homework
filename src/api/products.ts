@@ -20,14 +20,32 @@ const headers = computed(() => {
 });
 
 // ====== 取得商品列表 ======
+type Result = {
+  data: Product[];
+  pagination: {
+    total_pages: number;
+    current_page: number;
+    has_pre: boolean;
+    has_next: boolean;
+  };
+};
 export const fetch_products_api = async () => {
-  let result = [];
+  const result: Result = {
+    data: [],
+    pagination: {
+      total_pages: 0,
+      current_page: 0,
+      has_pre: false,
+      has_next: false,
+    },
+  };
   try {
-    const res = await axios.get(`${API_URL}/admin/products/all`, {
+    const res = await axios.get(`${API_URL}/admin/products`, {
       headers: headers.value,
     });
     if (res.data.products) {
-      result = convert_Array(res.data.products);
+      result.data = convert_Array(res.data.products);
+      result.pagination = res.data.pagination;
       return result;
     }
   } catch (error) {

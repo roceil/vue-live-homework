@@ -7,6 +7,7 @@ import Modal from '@/components/modal/Modal.vue'
 import ModelContent from '@/components/modal/ModelContent.vue'
 import addProductForm from '@/components/modal/addProductForm.vue'
 import { useModalStore } from '@/stores/modal'
+import { usePaginationStore } from '@/stores/pagination'
 import { modal_items } from '@/composables'
 import {
   fetch_products_api,
@@ -16,6 +17,7 @@ import {
 } from '@/api/products'
 import { check_identity_api } from '@/api/auth'
 import router from '@/router'
+import Pagination from '@/components/pagination/Pagination.vue'
 
 // ====== 檢查身分 ======
 const check_identity = async () => {
@@ -51,10 +53,14 @@ export type Product = {
 }
 
 const products = ref<Product[]>([])
+const paginationStore = usePaginationStore()
 
 onMounted(async () => {
   const fetch_data = await fetch_products_api()
-  products.value = fetch_data as Product[]
+  if (!fetch_data) return
+  products.value = fetch_data.data as Product[]
+  paginationStore.total_page = fetch_data.pagination.total_pages
+  paginationStore.current_page = fetch_data.pagination.current_page
 })
 
 // ====== 產品細節 ======
@@ -98,7 +104,7 @@ const edit_product = (product: Product, edit_product_id: string) => {
 const delete_product = async (product_id: string) => {
   try {
     const refetch_data = await delete_product_api(product_id)
-    products.value = refetch_data as Product[]
+    products.value = refetch_data as unknown as Product[]
     alert('刪除成功')
   } catch (error) {
     console.error(error)
@@ -134,7 +140,7 @@ const modal_submit = async () => {
     }
 
     const refetch_data = await add_product_api(product)
-    products.value = refetch_data as Product[]
+    products.value = refetch_data as unknown as Product[]
     modal_close()
     return
   }
@@ -151,7 +157,7 @@ const modal_submit = async () => {
     }
 
     const refetch_data = await edit_product_api(product, product_id.value)
-    products.value = refetch_data as Product[]
+    products.value = refetch_data as unknown as Product[]
     modal_close()
   }
 }
@@ -183,6 +189,9 @@ const modal_submit = async () => {
         :product_detail="product_detail"
       />
     </div>
+
+    <!-- 分頁 -->
+    <Pagination />
 
     <!-- Modal -->
     <Modal
