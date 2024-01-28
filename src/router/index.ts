@@ -16,6 +16,19 @@ const router = createRouter({
   ],
 });
 
+// ====== 路由守衛 ======
+const token = document.cookie.replace(
+  /(?:(?:^|.*;\s*)hexToken\s*=\s*([^;]*).*$)|^.*$/,
+  "$1"
+);
+
+router.beforeEach((to, from, next) => {
+  if (to.name === "home" && token) {
+    next({ name: "products" });
+  } else {
+    next();
+  }
+});
 
 
 export default router;
