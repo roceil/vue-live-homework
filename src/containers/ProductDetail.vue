@@ -3,7 +3,7 @@ import type { PropType } from "vue";
 import type { Product } from "../views/ProductsView.vue";
 defineProps({
   product_detail: {
-    type: Object as PropType<Product | undefined>,
+    type: Object as PropType<Product>,
     required: true,
   },
 });
