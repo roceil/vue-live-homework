@@ -1,7 +1,7 @@
 import axios from "axios";
 import { computed } from "vue";
 import { convert_Array } from "@/lib";
-import type { Product } from "@/views/ProductsView.vue";
+import type { Product } from "@/views/AdminView.vue";
 
 const API_URL = import.meta.env.VITE_API_URL as string;
 
@@ -20,7 +20,7 @@ const headers = computed(() => {
 });
 
 // ====== 取得商品列表 ======
-type Result = {
+export type Result = {
   data: Product[];
   pagination: {
     total_pages: number;

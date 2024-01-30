@@ -9,9 +9,14 @@ const router = createRouter({
       component: () => import("../views/HomeView.vue"),
     },
     {
-      path: "/products",
-      name: "products",
-      component: () => import("../views/ProductsView.vue"),
+      path: "/admin",
+      name: "admin",
+      component: () => import("../views/AdminView.vue"),
+    },
+    {
+      path: "/shop",
+      name: "shop",
+      component: () => import("../views/ShopView.vue"),
     },
   ],
 });
@@ -24,11 +29,10 @@ const token = document.cookie.replace(
 
 router.beforeEach((to, from, next) => {
   if (to.name === "home" && token) {
-    next({ name: "products" });
+    next({ name: "shop" });
   } else {
     next();
   }
 });
-
 
 export default router;

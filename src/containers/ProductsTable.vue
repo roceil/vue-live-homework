@@ -1,9 +1,10 @@
 <script lang="ts" setup>
 import type { PropType } from 'vue'
-import type { Product } from '@/views/ProductsView.vue'
+import { defineProps } from 'vue'
+import type { Product } from '@/views/AdminView.vue'
 import Button from '@/components/Button.vue'
 
-defineProps({
+ defineProps({
   products: {
     type: Array as PropType<Product[]>,
     required: true,
@@ -13,6 +14,7 @@ defineProps({
     required: true,
   },
 })
+
 
 const emit = defineEmits(['edit_product', 'delete_product'])
 
@@ -34,8 +36,8 @@ const delete_product = (product_id: string) => {
     <div class="flex flex-col mt-3 h-full justify-between">
       <table class="w-full text-left items-center justify-center">
         <!-- 表格標題 -->
-        <thead class="border-b-2 border-black mb4">
-          <tr class="text-gray-600">
+        <thead class="border-b-2 border-black">
+          <tr>
             <th
               class="px-4 py-2"
               v-for="title in tableTitle"
@@ -63,7 +65,7 @@ const delete_product = (product_id: string) => {
         <!-- 表格內容 -->
         <tbody>
           <tr
-            class="bg-gray-100"
+            class="border-b border-dashed border-gray-300 h-[80px]"
             v-for="product in products"
             :key="product.id"
           >
@@ -87,13 +89,15 @@ const delete_product = (product_id: string) => {
               </button>
             </td>
 
-            <td class="px-4 py-2 flex space-x-2">
+            <td class="px-4 py-2 space-x-2">
               <Button
+                class="inline-block"
                 text="編輯"
                 @click="edit_product(product, product.id)"
               />
               <Button
                 text="刪除"
+                class="inline-block"
                 bg_color="bg-red-500"
                 @click="delete_product(product.id)"
               />

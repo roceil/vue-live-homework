@@ -5,9 +5,11 @@ import axios from "axios";
 
 const router = useRouter();
 
-const toProducts = () => {
-  router.push("/products");
+const toShop = () => {
+  router.push("/shop");
 };
+
+
 
 const loginForm = ref([
   {
@@ -49,7 +51,7 @@ const handleSubmit = async () => {
   try {
     const loginSuccess = await login_api();
     if (loginSuccess) {
-      toProducts();
+      toShop();
     }
   } catch (error) {
     console.error(error);
