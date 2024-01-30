@@ -104,7 +104,8 @@ const edit_product = (product: Product, edit_product_id: string) => {
 const delete_product = async (product_id: string) => {
   try {
     const refetch_data = await delete_product_api(product_id)
-    products.value = refetch_data as unknown as Product[]
+    if (!refetch_data) return
+    products.value = refetch_data.data as Product[]
     alert('刪除成功')
   } catch (error) {
     console.error(error)
@@ -140,7 +141,8 @@ const modal_submit = async () => {
     }
 
     const refetch_data = await add_product_api(product)
-    products.value = refetch_data as unknown as Product[]
+    if (!refetch_data) return
+    products.value = refetch_data.data as Product[]
     modal_close()
     return
   }
@@ -157,7 +159,8 @@ const modal_submit = async () => {
     }
 
     const refetch_data = await edit_product_api(product, product_id.value)
-    products.value = refetch_data as unknown as Product[]
+    if (!refetch_data) return
+    products.value = refetch_data.data as Product[]
     modal_close()
   }
 }
