@@ -11,17 +11,20 @@ import {
 } from '@/components/ui/table'
 import { useCartStore } from '@/stores/cart'
 
+
 const tableHeadItem = ['品名', '數量／單位', '單價', '']
 
 const cartStore = useCartStore()
 
-const remove_from_cart = (id: number) => {
+const remove_from_cart = (id: string) => {
   cartStore.remove_from_cart(id)
 }
 
 const clear_cart = () => {
   cartStore.clear_cart()
 }
+
+
 </script>
 
 <template>
@@ -56,7 +59,7 @@ const clear_cart = () => {
           v-for="product in cartStore.cart"
           :key="product.id"
         >
-          <TableCell class="font-medium">{{ product.name }}</TableCell>
+          <TableCell class="font-medium">{{ product.title }}</TableCell>
           <TableCell>{{ product.quantity }}／{{ product.unit }}</TableCell>
           <TableCell>NT＄ {{ product.price }}</TableCell>
           <TableCell class="text-center">

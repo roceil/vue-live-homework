@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted } from 'vue'
 import { Button } from '@/components/ui/button'
 import {
   Table,
@@ -9,8 +9,9 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table'
-import { type Product, useCartStore } from '@/stores/cart'
-import axios from 'axios'
+import { type Product, useCartStore, type Cart } from '@/stores/cart'
+import { useLoadingStore } from '@/stores/loading'
+import { fetch_data_api } from '@/api/products'
 
 const tableHeadItem = [
   { name: '圖片', class: 'w-[100px] text-white text-center' },
@@ -19,76 +20,36 @@ const tableHeadItem = [
   { name: '', class: 'text-white' },
 ]
 
-const tableBodyItem = ref<Product[]>([
-  {
-    id: 1,
-    name: '測試商品1',
-    origin_price: 200,
-    price: 100,
-    quantity: 1,
-    unit: '個',
-  },
-  {
-    id: 2,
-    name: '測試商品2',
-    origin_price: 300,
-    price: 200,
-    quantity: 1,
-    unit: '個',
-  },
-  {
-    id: 3,
-    name: '測試商品3',
-    origin_price: 400,
-    price: 300,
-    quantity: 1,
-    unit: '包',
-  },
-  {
-    id: 4,
-    name: '測試商品4',
-    origin_price: 500,
-    price: 400,
-    quantity: 1,
-    unit: '片',
-  },
-])
-
 const cartStore = useCartStore()
 
 const add_to_cart = (choose_product: Product) => {
-  cartStore.add_to_cart(choose_product)
+  const cartItem: Cart = {
+    ...choose_product,
+    quantity: 1,
+  }
+
+  cartStore.add_to_cart(cartItem)
+  console.log(cartStore.cart)
 }
 
 onMounted(() => {
   cartStore.init_cart()
 })
 
-const API_URL = import.meta.env.VITE_API_URL as string
+const loadingStore = useLoadingStore()
+const tableBodyItem = ref<Product[]>([])
 
-const token = computed(() => {
-  const token = document.cookie.replace(
-    /(?:(?:^|.*;\s*)hexToken\s*=\s*([^;]*).*$)|^.*$/,
-    '$1',
-  )
-  return token
-})
-
-const headers = computed(() => {
-  return {
-    Authorization: token.value,
+onMounted(async () => {
+  loadingStore.open_loading()
+  try {
+    const render_data = await fetch_data_api()
+    tableBodyItem.value = render_data as unknown as Product[]
+  } catch (error) {
+    alert('取得商品列表失敗')
+    console.error(error)
+  } finally {
+    loadingStore.close_loading()
   }
-})
-
-const fetch_data = async () => {
-  const { data } = await axios.get(`${API_URL}/products`, {
-    headers: headers.value,
-  })
-  console.log(data)
-}
-
-onMounted(() => {
-  fetch_data()
 })
 </script>
 
@@ -114,10 +75,14 @@ onMounted(() => {
           v-for="item in tableBodyItem"
           :key="item.id"
         >
-          <TableCell class="font-medium">
-            <div class="w-[100px] h-[100px] bg-red-400 rounded"></div>
+          <TableCell class="w-[150px] flex justify-center items-center">
+            <img
+              :src="item.imageUrl"
+              :alt="item.title"
+              class="w-[100px] h-[100px] bg-red-400 rounded object-cover"
+            />
           </TableCell>
-          <TableCell class="text-center text-lg">{{ item.name }}</TableCell>
+          <TableCell class="text-center text-lg">{{ item.title }}</TableCell>
           <TableCell class="text-lg"
             >NT$ {{ item.price }}／{{ item.unit }}</TableCell
           >

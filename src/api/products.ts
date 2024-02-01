@@ -19,7 +19,7 @@ const headers = computed(() => {
   };
 });
 
-// ====== 取得商品列表 ======
+// ====== admin 取得商品列表 ======
 export type Result = {
   data: Product[];
   pagination: {
@@ -51,6 +51,27 @@ export const fetch_products_api = async () => {
   } catch (error) {
     console.error(error);
   }
+};
+
+// ====== 取得商品列表 ======
+interface Fetch_Data {
+  success: boolean;
+  products: Product[];
+  pagination: {
+    total_pages: number;
+    current_page: number;
+    has_pre: boolean;
+    has_next: boolean;
+    category: string;
+  };
+  messages: string[];
+}
+
+export const fetch_data_api = async (): Promise<Fetch_Data["products"]> => {
+  const { data } = await axios.get(`${API_URL}/products`, {
+    headers: headers.value,
+  });
+  return data.products;
 };
 
 // ====== 新增商品 ======

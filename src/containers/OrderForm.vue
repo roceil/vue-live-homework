@@ -11,14 +11,17 @@ import {
   FormMessage,
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
+import { useCartStore } from '@/stores/cart'
+import { formItems } from '@/constants'
+import { add_to_cart_api, send_order_api } from '@/api/order'
 
 const formSchema = toTypedSchema(
   z.object({
-    username: z
+    name: z
       .string()
       .min(2, '用戶名稱至少需要 2 個字符')
       .max(50, '用戶名稱不能超過 50 個字符'),
-    phone: z
+    tel: z
       .string()
       .min(10, '電話號碼需要 10 個數字')
       .max(10, '電話號碼不能超過 10 個數字'),
@@ -27,6 +30,7 @@ const formSchema = toTypedSchema(
       .string()
       .min(10, '地址至少需要 10 個字符')
       .max(50, '地址不能超過 50 個字符'),
+    message: z.string().max(200, '留言不能超過 200 個字符').optional(),
   }),
 )
 
@@ -34,42 +38,27 @@ const { handleSubmit } = useForm({
   validationSchema: formSchema,
 })
 
-const onSubmit = handleSubmit(values => {
-  console.log('values', values)
-})
+const cartStore = useCartStore()
 
-const formItems = [
-  {
-    name: 'username',
-    label: '收件人姓名',
-    placeholder: '請輸入姓名',
-    type: 'text',
-  },
-  {
-    name: 'email',
-    label: '收件人信箱',
-    placeholder: '請輸入信箱',
-    type: 'email',
-  },
-  {
-    name: 'phone',
-    label: '收件人電話',
-    placeholder: '請輸入聯絡電話',
-    type: 'tel',
-  },
-  {
-    name: 'address',
-    label: '收件人地址',
-    placeholder: '請輸入地址',
-    type: 'text',
-  },
-  {
-    name: 'note',
-    label: '備註',
-    placeholder: '請輸入備註',
-    type: 'text',
-  },
-]
+const onSubmit = handleSubmit(async values => {
+  if (!cartStore.cart.length) {
+    alert('請選擇商品後再提交訂單')
+    return
+  }
+
+  const { name, email, tel, address, message = '' } = values
+  try {
+    await Promise.all(
+      cartStore.cart.map(item => add_to_cart_api(item.id, item.quantity)),
+    )
+
+    cartStore.clear_cart()
+
+    await send_order_api({ name, email, tel, address, message })
+  } catch (error) {
+    console.error('提交訂單過程中出錯:', error)
+  }
+})
 </script>
 
 <template>

@@ -2,17 +2,26 @@ import { ref, computed } from "vue";
 import { defineStore } from "pinia";
 
 export interface Product {
-  id: number;
-  name: string;
+  category: string;
+  content: string;
+  description: string;
+  id: string;
+  imageUrl: string;
+  is_enabled: boolean;
   origin_price: number;
   price: number;
-  quantity: number;
+  title: string;
   unit: string;
+  num: number;
+}
+
+export interface Cart extends Product {
+  quantity: number;
 }
 
 export const useCartStore = defineStore("cart", () => {
   // 購物車清單
-  const cart = ref<Product[]>([]);
+  const cart = ref<Cart[]>([]);
 
   // 初始化 cart
   const init_cart = () => {
@@ -23,10 +32,10 @@ export const useCartStore = defineStore("cart", () => {
   };
 
   // 新增商品到購物車
-  const add_to_cart = (product: Product) => {
-    const index = cart.value.findIndex((item) => item.id === product.id);
+  const add_to_cart = (cartItem: Cart) => {
+    const index = cart.value.findIndex((item) => item.id === cartItem.id);
     if (index === -1) {
-      cart.value.unshift(product);
+      cart.value.unshift(cartItem);
       save_cart_to_localStorage();
       return;
     }
@@ -35,7 +44,7 @@ export const useCartStore = defineStore("cart", () => {
   };
 
   // 從購物車移除商品
-  const remove_from_cart = (id: number) => {
+  const remove_from_cart = (id: string) => {
     const index = cart.value.findIndex((item) => item.id === id);
     if (index === -1) return;
     cart.value[index].quantity = 1;
@@ -60,8 +69,7 @@ export const useCartStore = defineStore("cart", () => {
   const total_discount_price = computed(() => {
     return cart.value.reduce((acc, curr) => {
       return acc + curr.price * curr.quantity;
-    }
-    , 0);
+    }, 0);
   });
 
   // 將 cart 資料儲存到 localStorage
