@@ -28,9 +28,16 @@ const token = document.cookie.replace(
 );
 
 router.beforeEach((to, from, next) => {
+  // 如果要前往的頁面是首頁，且已經登入，則導向商品頁面
   if (to.name === "home" && token) {
     next({ name: "shop" });
-  } else {
+  }
+  // 如果要前往的頁面是 shop 但沒有 token，則導向首頁
+  else if (to.name === "shop" && !token) {
+    next({ name: "home" });
+  }
+  // 其他情況則放行
+  else {
     next();
   }
 });
