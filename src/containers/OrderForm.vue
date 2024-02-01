@@ -14,6 +14,7 @@ import { Input } from '@/components/ui/input'
 import { useCartStore } from '@/stores/cart'
 import { formItems } from '@/constants'
 import { add_to_cart_api, send_order_api } from '@/api/order'
+import { useLoadingStore } from '@/stores/loading'
 
 const formSchema = toTypedSchema(
   z.object({
@@ -34,29 +35,33 @@ const formSchema = toTypedSchema(
   }),
 )
 
-const { handleSubmit } = useForm({
+const { handleSubmit, resetForm } = useForm({
   validationSchema: formSchema,
 })
 
 const cartStore = useCartStore()
+const loadingStore = useLoadingStore()
 
 const onSubmit = handleSubmit(async values => {
   if (!cartStore.cart.length) {
     alert('請選擇商品後再提交訂單')
     return
   }
+  loadingStore.open_loading()
 
   const { name, email, tel, address, message = '' } = values
   try {
     await Promise.all(
       cartStore.cart.map(item => add_to_cart_api(item.id, item.quantity)),
     )
-
-    cartStore.clear_cart()
-
     await send_order_api({ name, email, tel, address, message })
+    alert('訂單成立')
+    resetForm()
+    cartStore.clear_cart()
   } catch (error) {
     console.error('提交訂單過程中出錯:', error)
+  } finally {
+    loadingStore.close_loading()
   }
 })
 </script>

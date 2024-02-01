@@ -67,7 +67,7 @@ const handleSubmit = async () => {
         <h1 class="text-2xl font-bold text-center">請先登入</h1>
 
         <!-- 登入表單 -->
-        <form id="form" class="mt-4 space-y-3">
+        <form id="form" class="mt-4 space-y-3 text-black">
           <label class="flex" v-for="item in loginForm" :key="item.placeholder">
             <input
               :type="item.type"
