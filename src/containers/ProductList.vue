@@ -29,7 +29,6 @@ const add_to_cart = (choose_product: Product) => {
   }
 
   cartStore.add_to_cart(cartItem)
-  console.log(cartStore.cart)
 }
 
 onMounted(() => {

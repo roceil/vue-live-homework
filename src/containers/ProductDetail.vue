@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { PropType } from "vue";
-import type { Product } from "../views/ProductsView.vue";
+import type { Product } from "../views/AdminView.vue";
 defineProps({
   product_detail: {
     type: Object as PropType<Product>,
