@@ -1,74 +1,73 @@
 <script lang="ts" setup>
-import { ref } from "vue";
-import { useRouter } from "vue-router";
-import axios from "axios";
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { useLoginStore } from '@/stores/login'
+import { login_api } from '@/api/auth'
 
-const router = useRouter();
+const loginStore = useLoginStore()
+const router = useRouter()
 
-const toShop = () => {
-  router.push("/shop");
-};
-
-
+const toDashboard = () => {
+  router.push('/admin')
+}
 
 const loginForm = ref([
   {
-    type: "email",
-    id: "username",
-    placeholder: " Email address",
+    type: 'email',
+    id: 'username',
+    placeholder: ' Email address',
     required: true,
-    inputValue: "",
+    inputValue: '',
   },
   {
-    type: "password",
-    id: "password",
-    placeholder: "Password",
+    type: 'password',
+    id: 'password',
+    placeholder: 'Password',
     required: true,
-    inputValue: "",
+    inputValue: '',
   },
-]);
-
-const login_api = async () => {
-  try {
-    const res = await axios.post("https://ec-course-api.hexschool.io/v2/admin/signin", {
-      username: loginForm.value[0].inputValue,
-      password: loginForm.value[1].inputValue,
-    });
-    const { token, expired } = res.data;
-    document.cookie = `hexToken=${token}; expires=${new Date(expired)}`;
-    return true; // 登入成功
-  } catch (error) {
-    console.error(error);
-    throw new Error("登入失敗");
-  }
-};
+])
 
 const handleSubmit = async () => {
   if (!loginForm.value[0].inputValue || !loginForm.value[1].inputValue) {
-    alert("請輸入帳號密碼");
-    return;
+    alert('請輸入帳號密碼')
+    return
   }
   try {
-    const loginSuccess = await login_api();
+    const loginSuccess = await login_api(
+      loginForm.value[0].inputValue,
+      loginForm.value[1].inputValue,
+    )
     if (loginSuccess) {
-      toShop();
+      loginStore.isLogin = true
+      toDashboard()
+      alert('登入成功')
     }
   } catch (error) {
-    console.error(error);
-    alert(error);
+    console.error(error)
+    alert(error)
   }
-};
+}
 </script>
 
 <template>
   <div class="HomeView">
-    <div class="container h-screen w-screen flex flex-col justify-center items-center">
+    <div
+      class="container h-[calc(100vh-72px)] w-screen flex flex-col justify-center items-center"
+    >
       <div class="">
         <h1 class="text-2xl font-bold text-center">請先登入</h1>
 
         <!-- 登入表單 -->
-        <form id="form" class="mt-4 space-y-3 text-black">
-          <label class="flex" v-for="item in loginForm" :key="item.placeholder">
+        <form
+          id="form"
+          class="mt-4 space-y-3 text-black"
+        >
+          <label
+            class="flex"
+            v-for="item in loginForm"
+            :key="item.placeholder"
+          >
             <input
               :type="item.type"
               class="border px-2 py-4 rounded placeholder:text-black"

@@ -2,20 +2,15 @@ import axios from "axios";
 import { computed } from "vue";
 import { convert_Array } from "@/lib";
 import type { Product } from "@/views/AdminView.vue";
+import Cookie from "js-cookie";
 
 const API_URL = import.meta.env.VITE_API_URL as string;
-
-const token = computed(() => {
-  const token = document.cookie.replace(
-    /(?:(?:^|.*;\s*)hexToken\s*=\s*([^;]*).*$)|^.*$/,
-    "$1"
-  );
-  return token;
-});
+const API_KEY = import.meta.env.VITE_API_KEY as string;
 
 const headers = computed(() => {
+  const token = Cookie.get("hexToken");
   return {
-    Authorization: token.value,
+    Authorization: token,
   };
 });
 
@@ -40,7 +35,7 @@ export const fetch_products_api = async () => {
     },
   };
   try {
-    const res = await axios.get(`${API_URL}/admin/products`, {
+    const res = await axios.get(`${API_URL}/${API_KEY}/admin/products`, {
       headers: headers.value,
     });
     if (res.data.products) {
@@ -68,7 +63,7 @@ interface Fetch_Data {
 }
 
 export const fetch_data_api = async (): Promise<Fetch_Data["products"]> => {
-  const { data } = await axios.get(`${API_URL}/products`, {
+  const { data } = await axios.get(`${API_URL}/${API_KEY}/products`, {
     headers: headers.value,
   });
   return data.products;
@@ -78,7 +73,7 @@ export const fetch_data_api = async (): Promise<Fetch_Data["products"]> => {
 export const add_product_api = async (product: Product) => {
   try {
     const res = await axios.post(
-      `${API_URL}/admin/product`,
+      `${API_URL}/${API_KEY}/admin/product`,
       { data: product },
       {
         headers: headers.value,
@@ -100,7 +95,7 @@ export const edit_product_api = async (
 ) => {
   try {
     const res = await axios.put(
-      `${API_URL}/admin/product/${product_id}`,
+      `${API_URL}/${API_KEY}/admin/product/${product_id}`,
       { data: product },
       {
         headers: headers.value,
@@ -118,7 +113,7 @@ export const edit_product_api = async (
 // ====== 刪除商品 ======
 export const delete_product_api = async (product_id: string) => {
   try {
-    const res = await axios.delete(`${API_URL}/admin/product/${product_id}`, {
+    const res = await axios.delete(`${API_URL}/${API_KEY}/admin/product/${product_id}`, {
       headers: headers.value,
     });
     if (res.data.success) {

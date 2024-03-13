@@ -1,11 +1,12 @@
 import axios from "axios";
 
 const API_URL = import.meta.env.VITE_API_URL as string;
+const API_KEY = import.meta.env.VITE_API_KEY as string;
 
 // 加入購物車
 
 export const add_to_cart_api = async (product_id: string, qty: number) => {
-  const { data } = await axios.post(`${API_URL}/cart`, {
+  const { data } = await axios.post(`${API_URL}/${API_KEY}/cart`, {
     data: {
       product_id,
       qty,
@@ -31,7 +32,7 @@ export const send_order_api = async ({
   address,
   message,
 }: OrderData) => {
-  const { data } = await axios.post(`${API_URL}/order`, {
+  const { data } = await axios.post(`${API_URL}/${API_KEY}/order`, {
     data: {
       user: {
         name,
